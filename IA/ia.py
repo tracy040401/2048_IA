@@ -1,6 +1,7 @@
 # build 2048 in python using pygame!!
 import pygame
 import random
+from MCTS import MCTS
 
 pygame.init()
 
@@ -183,6 +184,7 @@ def draw_pieces(board):
                 pygame.draw.rect(screen, 'black', [j * 95 + 20, i * 95 + 20, 75, 75], 2, 5)
 # ia function 
 def get_best_move(test):
+
     print("move : ", moves[test])
     return moves[test]
 
@@ -194,6 +196,8 @@ while run:
     screen.fill('gray')
     draw_board()
     draw_pieces(board_values)
+    mcts = MCTS(board_values)
+    print(mcts.initial_node.board)
     if spawn_new or init_count < 2:
         board_values, game_over = new_pieces(board_values)
         spawn_new = False
@@ -215,11 +219,11 @@ while run:
             run = False
 
     current_time = pygame.time.get_ticks()
-    if not game_over and current_time - ai_timer > 50: # intervalle de temps à ajuster
+    if not game_over and current_time - ai_timer > 10: # intervalle de temps à ajuster
         test%=3
         test+=1
+        print(mcts.mcts_search(1000, game_over).board)
         direction = get_best_move(test)  # Make the AI move
-        #TODO : mettre une fonction appelant ia retournant un mvt ci dessus
         ai_timer = current_time  # Update the timer
 
     if game_over:
