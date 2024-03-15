@@ -163,6 +163,7 @@ def draw_board():
 
 # draw tiles for game
 def draw_pieces(board):
+    #print("board in draw_pieces : ", board)
     for i in range(4):
         for j in range(4):
             value = board[i][j]
@@ -192,20 +193,44 @@ def get_best_move(test):
 test = 0 
 run = True
 while run:
+    
     timer.tick(fps)
     screen.fill('gray')
     draw_board()
+    #print("draw_board called.")
     draw_pieces(board_values)
+    #print("draw_pieces called.")
     mcts = MCTS(board_values)
-    print(mcts.initial_node.board)
+    print("board_values : ", board_values)
     if spawn_new or init_count < 2:
         board_values, game_over = new_pieces(board_values)
         spawn_new = False
         init_count += 1
-    if direction != '':
+        #print("first if.")
+
+    """ if direction != '':
         board_values = take_turn(direction, board_values)
-        direction = ''
-        spawn_new = True
+        direction = '' """
+    
+    #print("mcts search next.")
+    res = mcts.mcts_search(1, game_over)
+    board_values = res[0]
+    score += res[1]
+    print("SCORE = ", score)
+    if board_values is None:
+        game_over = True
+
+    """ current_time = pygame.time.get_ticks()
+    if not game_over and current_time - ai_timer > 20: # intervalle de temps à ajuster
+        test%=3
+        test+=1 
+        
+        ai_timer = current_time  # Update the timer """
+
+    #print("mcts search done.")
+    spawn_new = True
+    #print("spawn new : ", spawn_new)
+
     if game_over:
         draw_over()
         if high_score > init_high:
@@ -216,15 +241,7 @@ while run:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
-
-    current_time = pygame.time.get_ticks()
-    if not game_over and current_time - ai_timer > 10: # intervalle de temps à ajuster
-        test%=3
-        test+=1
-        print(mcts.mcts_search(1000, game_over).board)
-        direction = get_best_move(test)  # Make the AI move
-        ai_timer = current_time  # Update the timer
+            run = False 
 
     if game_over:
         keys = pygame.key.get_pressed()
