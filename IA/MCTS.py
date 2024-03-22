@@ -35,6 +35,7 @@ class MCTS(object):
             possible_moves = node.get_possible_moves()
             move = np.random.choice(possible_moves)
             node.apply_move(move)
+            #TODO : écrire la fonction apply_move 
         return node.score, move
 
     def backpropagation(self, node, score):
@@ -48,8 +49,11 @@ class MCTS(object):
             node = self._initial_node
             while node.children:
                 node = self.selection(node)
+                print(node)
             self.expansion(node)
             score = self.simulation(node, isGameOver)[0]
+            print(score)
             self.backpropagation(node, score)
         best_child = max(self._initial_node, key=lambda x: x.visited)
+        print(best_child)
         return best_child

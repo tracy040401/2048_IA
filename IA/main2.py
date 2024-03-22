@@ -1,7 +1,6 @@
 # build 2048 in python using pygame!!
 import pygame
 import random
-#from MCTS import MCTS
 from game_state import GameState
 from mcts_2 import MCTS
 
@@ -184,15 +183,15 @@ def draw_pieces(board):
                 text_rect = value_text.get_rect(center=(j * 95 + 57, i * 95 + 57))
                 screen.blit(value_text, text_rect)
                 pygame.draw.rect(screen, 'black', [j * 95 + 20, i * 95 + 20, 75, 75], 2, 5)
-# ia function 
-def get_best_move(test):
 
-    print("move : ", moves[test])
-    return moves[test]
 
 # main game loop
 test = 0
 i = 0
+# Création de l'état initial du jeu
+initial_state = GameState(board_values)
+
+
 run = True
 while run:
     timer.tick(fps)
@@ -204,8 +203,9 @@ while run:
         spawn_new = False
         init_count += 1
     if init_count == 2: 
-        mcts = MCTS(board_values)
-        print(mcts.initial_node.board)
+        # Création de l'instance MCTS
+        mcts = MCTS(initial_state)
+        print(mcts.game_state.get_board())
     if direction != '':
         board_values = take_turn(direction, board_values)
         direction = ''
@@ -228,8 +228,10 @@ while run:
         test+=1
         if init_count >= 2:
             print("Recherche MCTS")
-            print(mcts.mcts_search(10, game_over).board) # on est censé à 1000
-        direction = get_best_move(test)  # Make the AI move
+            action = mcts.select_action()
+            #print(mcts.mcts_search(10, game_over).board) # on est censé à 1000
+        #direction = get_best_move(test)  # Make the AI move
+        
         ai_timer = current_time  # Update the timer
 
     if game_over:
