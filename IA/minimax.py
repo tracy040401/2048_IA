@@ -186,8 +186,8 @@ def clone(board):
     return [row[:] for row in board]
 
 def evaluate(board):
-    empty_cells = sum(row.count(0) for row in board)  # Number of empty cells
-    max_tile = max(max(row) for row in board)  # Maximum tile value
+    empty_cells = sum(row.count(0) for row in board) 
+    max_tile = max(max(row) for row in board) 
     eval_score = 0
 
      # heuristique 1 : + il y a de case vide, mieux c'est 
@@ -215,12 +215,11 @@ def minimax(actual_board, depth, maximizing_player):
     board = clone(actual_board)
     if depth == 0 or game_over:
         return None, evaluate(board)
-    
+    # joueur maximisant
     if maximizing_player:
         max_score = float('-inf')
         best_move = None
 
-        # for all the moves
         for move in ['UP', 'DOWN', 'LEFT', 'RIGHT']:
             new_board = take_turn(move, board)
             _, new_score = minimax(new_board, depth - 1, False)
@@ -228,6 +227,7 @@ def minimax(actual_board, depth, maximizing_player):
                 max_score = new_score
                 best_move = move
         return best_move, max_score
+    # joueur minimisant
     else:
         min_score = float('inf')
         best_move = None
@@ -241,7 +241,6 @@ def minimax(actual_board, depth, maximizing_player):
         return best_move, min_score
 
 
-# https://www.cs.uml.edu/ecg/uploads/AIfall14/vignesh_gayas_2048_project.pdf
 def expectiminimax(board, depth, maximizing_player):
     # si on a atteint la longueur max de l'arbre ou si le jeu est terminé
     if depth == 0 or game_over:
@@ -268,8 +267,6 @@ def expectiminimax(board, depth, maximizing_player):
         return best_move, max_score
     # si on est dans un noeud chance 
     elif RANDOM_EVENT_AT_NODE:
-        
-            # print("VARIABLE RANDOM TRUE")
         total_score = 0
         num_children = 0
 
@@ -285,9 +282,7 @@ def expectiminimax(board, depth, maximizing_player):
         # on retourne la moyenne des scores obtenus
         return None, total_score / num_children
     # si on est dans un noeud minimisant
-    # on est dans un noeud minimisant quand ...
     else:
-        print("VARIABLE RANDOM FALSE")
         # on initialise le score minimal à +infini
         min_score = float('inf')
         best_move = None
@@ -334,6 +329,7 @@ while run:
     else:
         best_move, _ = expectiminimax(board_values, depth=6, maximizing_player=True)
         # best_move = random_move(board_values)
+        # best_move, _ = minimax(board_values, depth=6, maximizing_player=True)
         if best_move:
             old_board_values = clone(board_values)
             board_values = take_turn(best_move, board_values)
